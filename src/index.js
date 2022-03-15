@@ -8,7 +8,7 @@ app.use(bodyParser.json());
 app.use('/',route)
 app.use(bodyParser.urlencoded({ extended: true }));
 
-mongoose.connect("mongodb://127.0.0.1:27017/mymongoDB", {useNewUrlParser: true})
+mongoose.connect("mongodb+srv://CCAnkit:CCAnkit09@clusternew.gds9x.mongodb.net/Ankit", {useNewUrlParser: true})
 .then(() => console.log('Successfully connected to mongoDB 27017'))
 .catch(err => console.log('Connection error'))
 
