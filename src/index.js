@@ -9,7 +9,7 @@ app.use('/',route)
 app.use(bodyParser.urlencoded({ extended: true }));
 
 mongoose.connect("mongodb+srv://CCAnkit:CCAnkit09@clusternew.gds9x.mongodb.net/Ankit", {useNewUrlParser: true})
-.then(() => console.log('Successfully connected to mongoDB 27017'))
+.then(() => console.log('MongoDb is connected'))
 .catch(err => console.log('Connection error'))
 
 app.listen(process.env.PORT || 3000, function() {

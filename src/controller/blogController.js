@@ -7,7 +7,7 @@ const blog = async function (req, res){
         const id = blogDetails.authorId
         if (!blogDetails.title) {return res.status(400).send({status:false, msg:"title is required"})}
         if (!blogDetails.body) {return res.status(400).send({status:false, msg:"body is required"})}
-        if (!blogDetails.catagory) {return res.status(400).send({status:false, msg:"catagory is required"})}
+        if (!blogDetails.category) {return res.status(400).send({status:false, msg:"category is required"})}
         if (!blogDetails.authorId) {return res.status(400).send({status:false, msg:"authorId is required"})}
         const validate = await authorModel.findById(id)  //check valid author id
         if(!validate) {

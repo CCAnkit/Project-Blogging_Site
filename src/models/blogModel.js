@@ -16,7 +16,7 @@ const objectId = mongoose.Schema.Types.ObjectId
         required : true
     },
     "tags" : ["String"],
-    "catagory" : {
+    "category" : {
         type : ["String"],    // [technology, entertainment, life style, food, fashion]
         required : true
     },
