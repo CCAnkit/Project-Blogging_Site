@@ -6,23 +6,16 @@ const login = async function(req, res){
         let authorData = req.body
         const userName = authorData.email
         const password = authorData.password
-        let authorEmail = await authorModel.findOne({ email: userName});
-        if (!authorEmail)
+        let authorCred = await authorModel.findOne({ email: userName, password: password});
+        if (!authorCred)
           return res.status(400).send({
             status: false,
-            msg: "username is not correct",
-          })
-
-          let authorpass = await authorModel.findOne({password: password});   
-        if (!authorpass)
-          return res.status(400).send({
-            status: false,
-            msg: "password is not correct",
+            msg: "Username or Password is not correct",
           })
         
           let token = jwt.sign(
             {
-              authorId : authorEmail._id.toString()
+              authorId : authorCred._id.toString()
             },
             "project for blogs"
           );
