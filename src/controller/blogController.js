@@ -1,25 +1,26 @@
 const blogModel = require('../models/blogModel.js');
 const authorModel = require('../models/authorModel.js');
 
-const blog = async function (req, res){
+const createBlog = async function (req, res){
     try{
         const blogDetails = req.body
         const id = blogDetails.authorId
-        if (!blogDetails.title) {return res.status(400).send({status:false, msg:"title is required"})}
-        if (!blogDetails.body) {return res.status(400).send({status:false, msg:"body is required"})}
-        if (!blogDetails.category) {return res.status(400).send({status:false, msg:"category is required"})}
-        if (!blogDetails.authorId) {return res.status(400).send({status:false, msg:"authorId is required"})}
-        const validate = await authorModel.findById(id)  //check valid author id
+        if (!blogDetails.title) {return res.status(400).send({status:false, msg: "Title is required"})}   //Firstname is mandory
+        if (!blogDetails.body) {return res.status(400).send({status:false, msg: "Body is required"})}   //Last name is mandory
+        if (!blogDetails.category) {return res.status(400).send({status:false, msg: "Category is required"})}  //Title is mandory
+        if (!blogDetails.authorId) {return res.status(400).send({status:false, msg: "AuthorId is required"})}  //Email is mandory
+
+        const validate = await authorModel.findById(id)   //finding by authorId
         if(!validate) {
-            return res.status(400).send({status:false, msg:"invalid authorId"})
+            return res.status(400).send({status:false, msg:"AuthorId is invalid"})    //check valid authorId
         }
-        const data = await blogModel.create(blogDetails)
-        console.log("data saved successfully")
+        const data = await blogModel.create(blogDetails)   //create blog
+        console.log("Data saved successfully")
         res.status(201).send({status:true, data:data})  
     }
     catch(err){
     console.log(err)
-    res.status(500).send({status:false, msg:error.message})
+    res.status(500).send({status:false, msg: err.message})
     }
 }
 
@@ -27,115 +28,112 @@ const getBlog = async function (req, res){
     try{
             let qwery = req.query
             let filter = {
-                isDeleted: false,
-                isPublished: true,
+                isDeleted: false,     //store the condition in filter variable
+                isPublished: false,
                 ...qwery
-            };
-            const filterByQuery = await blogModel.find(filter)
-            if(filterByQuery.length == 0){
-                return res.status(404).send({status:false, msg:"no blog found"})
             }
-            console.log("data fetched successfully")
+            // console.log(filter)
+
+            const filterByQuery = await blogModel.find(filter)  //finding the blog by the condition that is stored in the fiter variable.
+            if(filterByQuery.length == 0) {
+                return res.status(404).send({status:false, msg:"No blog found"})
+            }
+            console.log("Data fetched successfully")
             res.status(201).send({status:true, data:filterByQuery})
     }
-    catch(err){
+    catch(err) {
     console.log(err)
-    res.status(500).send({status:false, msg:error.message})
+    res.status(500).send({status:false, msg: err.message})
     }
 }
 
-const editBlog = async function(req, res){
+const updateBlog = async function(req, res){
     try{
         const blogId = req.params.blogId
         const Details = req.body
-        const validId = await blogModel.findById(blogId)
+        const validId = await blogModel.findById(blogId)   //finding the blogId 
         if (!validId){
-            return res.status(400).send({status:false, msg:"blog Id invalid"})
+            return res.status(400).send({status:false, msg:"Blog Id is invalid"})   //check the blogId
         }
-        const authorIdParam = req.param.authorId
-        const authorIdBlog = validId.authorId.toString()
-        if(authorIdParam !== authorIdBlog) {
-            return req.status(401).send({status: false, msg: "This is not your blog, you can not update it."})
+        const authorIdFromParam = req.params.authorId
+        const authorIdFromBlog = validId.authorId.toString()    //change the authorId to string
+        if (authorIdFromParam !== authorIdFromBlog) {          // for similar authorId from param & blogModel to update
+            return res.status(401).send({status : false, msg : "This is not your blog, you can not update it."})
         }
-          
         const updatedDetails = await blogModel.findOneAndUpdate(
-            {_id : blogId},
+            {_id : blogId},    //update the title, body, tage & subcategory.
             {title : Details.title, body : Details.body, tags : Details.tags,
             subcategory : Details.subcategory, isPublished : true, publishedAt : new Date()},
-            {new : true, upsert : true})
+            {new : true, upsert : true})    //ispublished will be true and update the date at publishAt.
         res.status(201).send({status:true, data:updatedDetails})
     }
-    catch(err){
-    console.log(err)
-    res.status(500).send({status:false, msg:error.message})
+    catch(err) {
+        console.log(err)
+        res.status(500).send({status:false, msg: err.message})
     }
 }
 
 const deleteBlogById = async function(req, res){
     try{
         const blogId = req.params.blogId
-        const validId = await blogModel.findById(blogId)
+        const validId = await blogModel.findById(blogId)   
         if (!validId){
-            return res.status(400).send({status:false, msg:"blog Id invalid"})
+            return res.status(400).send({status:false, msg:"Blog Id is invalid"})
         }
-        const authorIdParam = req.param.authorId
-        const authorIdBlog = validId.authorId.toString()
-        console.log(authorIdBlog, authorIdParam)
-        if(authorIdParam !== authorIdBlog) {
-            return req.status(401).send({status: false, msg: "This is not your blog, you can not update it."})
-        }
-
+        const authorIdFromParam = req.params.authorId
+        const authorIdFromBlog = validId.authorId.toString()    //change the authorId to string
+        console.log(authorIdFromBlog, authorIdFromParam)
+        if (authorIdFromParam !== authorIdFromBlog) {          // for similar authorId from param & blogModel to delete
+            return res.status(401).send({status : false, msg : "This is not your blog, you can not delete it."})
+        }       //checks the authorId with the blogId that who is the owner of this blog.  
         const deletedDetails = await blogModel.findOneAndUpdate(
             {_id : blogId},
             {isDeleted : true, deletedAt : new Date()},
-            {new : true})
+            {new : true})    //isDeleted will be true & update the date at deletedAt.
         res.status(201).send({status:true, data:deletedDetails})
     }
-    catch(err){
-    console.log(err)
-     res.status(500).send({status:false, msg:error.message})
+    catch(err) {
+        console.log(err)
+         res.status(500).send({status:false, msg: err.message})
     }
 }
 
 const deleteBlogByQuery = async function(req, res){
     try{
-        let qwery = req.query
+    let qwery = req.query
         let filter = {...qwery}
-        const filterByQuery = await blogModel.find(filter)
-        // console.log(filterByQuery)
+        const filterByQuery = await blogModel.find(filter)    //finding the blogId & return the array form with the data.
+        console.log(filterByQuery)
         if(filterByQuery.length == 0){
             return res.status(404).send({status:false, msg:"No blog found to delete"})
-        }
-        const authorIdParam = req.param.authorId
-        for(let i = 0; i<filterByQuery.length; i++){
-            let authorIdBlog = filterByQuery[i].authorId.toString()
-            console.log(authorIdBlog)
-            if(authorIdBlog == authorIdParam) {
+        }    
+        const authorIdFromParam = req.params.authorId
+        for (let i=0; i<filterByQuery.length; i++){
+            let authorIdFromBlog = filterByQuery[i].authorId.toString()   
+            console.log(authorIdFromBlog)
+            if (authorIdFromBlog == authorIdFromParam){     // for similar authorId from param & blogModel to delete
                 const deletedDetails = await blogModel.findOneAndUpdate(
                     filter,
-                    {isDeleted : true, deletedAt : new Date()},
-                    {new : true})
-                    res.status(201).send({status:true, data:deletedDetails})
-                    break
-            } else {
-                return req.status(401).send({status: false, msg: "This is not your blog, you can not update it."})
+                    {isDeleted : true, deletedAt : new Date()},   //isDeleted will be true & update the date at deletedAt.
+                    {new : true})   
+                res.status(201).send({status:true, data:deletedDetails})
+                break
+            }else {
+                return res.status(401).send({status : false, msg : "This is not your blog, you can not delete it."})
             }
         }
     }
-    catch(err){
-    console.log(err)
-    res.status(500).send({status:false, msg:error.message})
-    }
+    catch(err) {
+        console.log(err)
+        res.status(500).send({status:false, msg: err.message})
+        }
 }
+    
 
-// const getAllBlogs = async function (req, res){
-//     const details = await blogModel.find()
-//     res.send({msg : details})
-// }
 
-module.exports.blog = blog
+
+module.exports.createBlog = createBlog
 module.exports.getBlog = getBlog
-module.exports.editBlog = editBlog
+module.exports.updateBlog = updateBlog
 module.exports.deleteBlogById = deleteBlogById
 module.exports.deleteBlogByQuery = deleteBlogByQuery
-// module.exports.getAllBlogs = getAllBlogs

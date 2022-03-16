@@ -3,26 +3,25 @@ const authorModel = require('../models/authorModel.js');
 
 const login = async function(req, res){
     try{
-        let authorData = req.body
-        const userName = authorData.email
-        const password = authorData.password
-        let authorCred = await authorModel.findOne({ email: userName, password: password});
+        let author = req.body
+        const userName = author.email
+        const password = author.password
+        let authorCred = await authorModel.findOne({ email: userName, password: password});  //finding the email/password in the authors.
         if (!authorCred)
-          return res.status(400).send({
-            status: false,
-            msg: "Username or Password is not correct",
-          })
+          return res.status(400).send({status: false, msg: "Username & Password is not correct, Please check your credentials again.",})
         
-          let token = jwt.sign(
+          let token = jwt.sign(   //creting the token for the authentication.
             {
-              authorId : authorCred._id.toString()
+              authorId : authorCred._id.toString()   //payload(details that we saved in this token)
             },
-            "Project/blogs"
+            "Project/blogs"  //secret key
           );
-          res.setHeader("x-api-key", token);
-          res.send({ status: true, data: token });
+          res.setHeader("x-api-key", token);  //header name
+          res.send({ status: true, data: token });  
     }
-    catch (errorFound) {res.status(500).send({status:false, msg : errorFound.message})}
-  };
+    catch (err) {
+      res.status(500).send({status:false, msg : err.message})
+    }
+  }
 
   module.exports.login = login;
