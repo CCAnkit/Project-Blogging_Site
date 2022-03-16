@@ -14,7 +14,7 @@ let authentication = async function(req, res, next){
 let authorization = async function(req, res, next){
     try {
         let token = req.headers['x-api-key']
-        let decodedToken = jwt.verify(token, "project for blogs");
+        let decodedToken = jwt.verify(token, "Project/blogs");
         let usedLoggedIn = decodedToken.authorId
         let param_Id = req.params.authorId
         if (usedLoggedIn !== param_Id) return res.status(401).send("You are not autherised to access") 
@@ -22,7 +22,6 @@ let authorization = async function(req, res, next){
     }
     catch (errorFound) {res.status(500).send({error : errorFound.message})}
 }
-
 
 module.exports.authenticate = authentication
 module.exports.authorize = authorization

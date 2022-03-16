@@ -17,7 +17,10 @@ const blog = async function (req, res){
         console.log("data saved successfully")
         res.status(201).send({status:true, data:data})  
     }
-    catch(error){ res.status(500).send({status:false, msg:error.message})}               
+    catch(err){
+    console.log(err)
+    res.status(500).send({status:false, msg:error.message})
+    }
 }
 
 const getBlog = async function (req, res){
@@ -35,7 +38,10 @@ const getBlog = async function (req, res){
             console.log("data fetched successfully")
             res.status(201).send({status:true, data:filterByQuery})
     }
-    catch(error){ res.status(500).send({status:false, msg:error.message})}
+    catch(err){
+    console.log(err)
+    res.status(500).send({status:false, msg:error.message})
+    }
 }
 
 const editBlog = async function(req, res){
@@ -59,7 +65,10 @@ const editBlog = async function(req, res){
             {new : true, upsert : true})
         res.status(201).send({status:true, data:updatedDetails})
     }
-    catch(error){ res.status(500).send({status:false, msg:error.message})}
+    catch(err){
+    console.log(err)
+    res.status(500).send({status:false, msg:error.message})
+    }
 }
 
 const deleteBlogById = async function(req, res){
@@ -71,16 +80,21 @@ const deleteBlogById = async function(req, res){
         }
         const authorIdParam = req.param.authorId
         const authorIdBlog = validId.authorId.toString()
+        console.log(authorIdBlog, authorIdParam)
         if(authorIdParam !== authorIdBlog) {
             return req.status(401).send({status: false, msg: "This is not your blog, you can not update it."})
-        } 
+        }
+
         const deletedDetails = await blogModel.findOneAndUpdate(
             {_id : blogId},
             {isDeleted : true, deletedAt : new Date()},
             {new : true})
         res.status(201).send({status:true, data:deletedDetails})
     }
-    catch(error){ res.status(500).send({status:false, msg:error.message})}
+    catch(err){
+    console.log(err)
+     res.status(500).send({status:false, msg:error.message})
+    }
 }
 
 const deleteBlogByQuery = async function(req, res){
@@ -88,31 +102,40 @@ const deleteBlogByQuery = async function(req, res){
         let qwery = req.query
         let filter = {...qwery}
         const filterByQuery = await blogModel.find(filter)
+        // console.log(filterByQuery)
         if(filterByQuery.length == 0){
-            return res.status(404).send({status:false, msg:"no blog found to delete"})
+            return res.status(404).send({status:false, msg:"No blog found to delete"})
         }
         const authorIdParam = req.param.authorId
-        const authorIdBlog = validId.authorId.toString()
-        if(authorIdParam !== authorIdBlog) {
-            return req.status(401).send({status: false, msg: "This is not your blog, you can not update it."})
+        for(let i = 0; i<filterByQuery.length; i++){
+            let authorIdBlog = filterByQuery[i].authorId.toString()
+            console.log(authorIdBlog)
+            if(authorIdBlog == authorIdParam) {
+                const deletedDetails = await blogModel.findOneAndUpdate(
+                    filter,
+                    {isDeleted : true, deletedAt : new Date()},
+                    {new : true})
+                    res.status(201).send({status:true, data:deletedDetails})
+                    break
+            } else {
+                return req.status(401).send({status: false, msg: "This is not your blog, you can not update it."})
+            }
         }
-        const deletedDetails = await blogModel.findOneAndUpdate(
-            filter,
-            {isDeleted : true, deletedAt : new Date()},
-            {new : true})
-        res.status(201).send({status:true, data:deletedDetails})
     }
-    catch(error){ res.status(500).send({status:false, msg:error.message})}
+    catch(err){
+    console.log(err)
+    res.status(500).send({status:false, msg:error.message})
+    }
 }
 
-const getAllBlogs = async function (req, res){
-    const details = await blogModel.find()
-    res.send({msg : details})
-}
+// const getAllBlogs = async function (req, res){
+//     const details = await blogModel.find()
+//     res.send({msg : details})
+// }
 
 module.exports.blog = blog
 module.exports.getBlog = getBlog
 module.exports.editBlog = editBlog
 module.exports.deleteBlogById = deleteBlogById
 module.exports.deleteBlogByQuery = deleteBlogByQuery
-module.exports.getAllBlogs = getAllBlogs
+// module.exports.getAllBlogs = getAllBlogs

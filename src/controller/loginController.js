@@ -17,7 +17,7 @@ const login = async function(req, res){
             {
               authorId : authorCred._id.toString()
             },
-            "project for blogs"
+            "Project/blogs"
           );
           res.setHeader("x-api-key", token);
           res.send({ status: true, data: token });
