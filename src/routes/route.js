@@ -13,7 +13,7 @@ router.post('/login', authorLogin.login) //login
 //blogs
 router.post('/blogs',middleware.authenticate, blogController.createBlog) //create blogs
 
-router.get('/blogs/:authorId',middleware.authenticate, blogController.getBlog) //get blogs
+router.get('/blogs',middleware.authenticate, blogController.getBlog) //get blogs
 
 router.put('/blogs/:authorId/:blogId',middleware.authenticate, middleware.authorize, blogController.updateBlog) //update blogs
 
@@ -22,6 +22,6 @@ router.delete('/blogs/:authorId/:blogId',middleware.authenticate, middleware.aut
 
 router.delete('/blogs/:authorId',middleware.authenticate, middleware.authorize, blogController.deleteBlogByQuery)  //delete by Query
 
-router.get("/getAllBlogs", blogController.getAllBLogs)
+// router.get("/getAllBlogs", blogController.getAllBLogs)
 
 module.exports = router;

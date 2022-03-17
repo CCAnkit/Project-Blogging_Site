@@ -16,7 +16,7 @@ const author = async function (req, res){
 
         const data = await authorModel.create(details)  //creating the author details
         console.log("Data saved successfully")
-        res.status(201).send({status: true, msg : data})
+        res.status(201).send({status: true, msg : data}) //enum will be handel
     }
     catch(err){
         res.status(500).send({status:false, error : err.message})

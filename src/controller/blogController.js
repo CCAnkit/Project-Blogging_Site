@@ -29,7 +29,7 @@ const getBlog = async function (req, res){
             let qwery = req.query
             let filter = {
                 isDeleted: false,     //store the condition in filter variable
-                isPublished: true,
+                isPublished: false,
                 ...qwery
             }
             // console.log(filter)
@@ -39,7 +39,7 @@ const getBlog = async function (req, res){
                 return res.status(404).send({status:false, msg:"No blog found"})
             }
             console.log("Data fetched successfully")
-            res.status(201).send({status:true, data:filterByQuery})
+            res.status(200).send({status:true, data:filterByQuery})
     }
     catch(err) {
     console.log(err)
@@ -130,10 +130,10 @@ const deleteBlogByQuery = async function(req, res){
 }
     
 
-const getAllBLogs = async function(req, res) {
-    const getBlogs = await blogModel.find()
-    res.send({msg: getBlogs})
-}
+// const getAllBLogs = async function(req, res) {
+//     const getBlogs = await blogModel.find()
+//     res.send({msg: getBlogs})
+// }
 
 
 
@@ -143,4 +143,4 @@ module.exports.getBlog = getBlog
 module.exports.updateBlog = updateBlog
 module.exports.deleteBlogById = deleteBlogById
 module.exports.deleteBlogByQuery = deleteBlogByQuery
-module.exports.getAllBLogs = getAllBLogs;
+// module.exports.getAllBLogs = getAllBLogs;
