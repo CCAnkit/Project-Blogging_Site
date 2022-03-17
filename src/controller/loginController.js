@@ -8,7 +8,7 @@ const login = async function(req, res){
         const password = author.password
         let authorCred = await authorModel.findOne({ email: userName, password: password});  //finding the email/password in the authors.
         if (!authorCred)
-          return res.status(400).send({status: false, msg: "Username & Password is not correct, Please check your credentials again.",})
+          return res.status(401).send({status: false, msg: "Username & Password is not correct, Please check your credentials again.",})
         
           let token = jwt.sign(   //creting the token for the authentication.
             {

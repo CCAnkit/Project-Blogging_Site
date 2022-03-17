@@ -17,7 +17,8 @@ const mongoose = require('mongoose');
     "email" : {
         type : String, 
         required : true,
-        unique : true
+        unique : true,
+        lowercase : true
     },
     "password" : {
         type : String,
@@ -26,4 +27,4 @@ const mongoose = require('mongoose');
 }
 , {timestamps : true})
 
-module.exports = mongoose.model('project1Author', authorSchema);
+module.exports = mongoose.model('authorProject1', authorSchema);

@@ -20,7 +20,7 @@ let authorization = async function(req, res, next){
         let decodedToken = jwt.verify(token, "Project/blogs");
         let usedLoggedIn = decodedToken.authorId
         let param_Id = req.params.authorId
-        if (usedLoggedIn !== param_Id) return res.status(401).send("You are not autherised to access.") 
+        if (usedLoggedIn !== param_Id) return res.status(403).send("You are not autherised to access.") 
         next()
     }
     catch (err) {

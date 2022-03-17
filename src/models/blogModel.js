@@ -35,4 +35,4 @@ const objectId = mongoose.Schema.Types.ObjectId
 }
 , {timestamps : true})
 
-module.exports = mongoose.model('project1Blog', blogSchema);
+module.exports = mongoose.model('blogProject1', blogSchema);

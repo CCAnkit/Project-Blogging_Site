@@ -29,7 +29,7 @@ const getBlog = async function (req, res){
             let qwery = req.query
             let filter = {
                 isDeleted: false,     //store the condition in filter variable
-                isPublished: false,
+                isPublished: true,
                 ...qwery
             }
             // console.log(filter)
@@ -130,6 +130,12 @@ const deleteBlogByQuery = async function(req, res){
 }
     
 
+const getAllBLogs = async function(req, res) {
+    const getBlogs = await blogModel.find()
+    res.send({msg: getBlogs})
+}
+
+
 
 
 module.exports.createBlog = createBlog
@@ -137,3 +143,4 @@ module.exports.getBlog = getBlog
 module.exports.updateBlog = updateBlog
 module.exports.deleteBlogById = deleteBlogById
 module.exports.deleteBlogByQuery = deleteBlogByQuery
+module.exports.getAllBLogs = getAllBLogs;

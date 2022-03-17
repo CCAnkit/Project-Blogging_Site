@@ -9,7 +9,7 @@ const author = async function (req, res){
         if (!details.email) {return res.status(400).send({status:false, msg:"Email is required"})}   //Email is mandory
         if (!details.password) {return res.status(400).send({status:false, msg:"Password is required"})}  //Password is mandory
       
-        const validateEmail = (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(details.email))  //Regex for checking the the valid email format 
+        const validateEmail = (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(details.email))  //Regex for checking the valid email format 
         if (!validateEmail){
             return res.status(400).send({status:false, msg:"Email is invalid, Please check your Email address."})   //email address checking
         }
