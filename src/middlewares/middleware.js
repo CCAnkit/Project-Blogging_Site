@@ -10,7 +10,7 @@ let authentication = async function(req, res, next){
     }
     catch (err) {
         console.log(err)
-        res.status(500).send({error : errorFound.message})
+        res.status(500).send({msg: err.message})
     }
 }
 
@@ -25,7 +25,7 @@ let authorization = async function(req, res, next){
     }
     catch (err) {
         console.log(err)
-        res.status(500).send({error : errorFound.message})
+        res.status(500).send({msg: err.message})
     }
 }
 

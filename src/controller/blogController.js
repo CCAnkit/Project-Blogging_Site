@@ -1,10 +1,21 @@
 const blogModel = require('../models/blogModel.js');
 const authorModel = require('../models/authorModel.js');
 
+const isValidValue = function(value){
+    if (typeof value === 'undefined' || value === null) return false
+    if (typeof value === 'string' && value.trim().length === 0) return false
+    return true
+}
+
+const isValidDetails = function(details){
+    return Object.keys(details).length > 0
+}
+
 const createBlog = async function (req, res){
     try{
         const blogDetails = req.body
         const id = blogDetails.authorId
+        if(!isValidDetails(blogDetails)){res.status(400).send({status:false, msg:"Please provide blog details"})}   //Blog 
         if (!blogDetails.title) {return res.status(400).send({status:false, msg: "Title is required"})}   //Firstname is mandory
         if (!blogDetails.body) {return res.status(400).send({status:false, msg: "Body is required"})}   //Last name is mandory
         if (!blogDetails.category) {return res.status(400).send({status:false, msg: "Category is required"})}  //Title is mandory
@@ -39,7 +50,7 @@ const getBlog = async function (req, res){
                 return res.status(404).send({status:false, msg:"No blog found"})
             }
             console.log("Data fetched successfully")
-            res.status(200).send({status:true, data:filterByQuery})
+            res.status(201).send({status:true, data:filterByQuery})
     }
     catch(err) {
     console.log(err)
@@ -51,6 +62,9 @@ const updateBlog = async function(req, res){
     try{
         const blogId = req.params.blogId
         const Details = req.body
+        if(!blogId){
+            return res.status(400).send({status: false, msg: "Please Provide BlogId"})
+        }
         const validId = await blogModel.findById(blogId)   //finding the blogId 
         if (!validId){
             return res.status(400).send({status:false, msg:"Blog Id is invalid"})   //check the blogId
@@ -128,14 +142,6 @@ const deleteBlogByQuery = async function(req, res){
         res.status(500).send({status:false, msg: err.message})
         }
 }
-    
-
-// const getAllBLogs = async function(req, res) {
-//     const getBlogs = await blogModel.find()
-//     res.send({msg: getBlogs})
-// }
-
-
 
 
 module.exports.createBlog = createBlog
@@ -143,4 +149,3 @@ module.exports.getBlog = getBlog
 module.exports.updateBlog = updateBlog
 module.exports.deleteBlogById = deleteBlogById
 module.exports.deleteBlogByQuery = deleteBlogByQuery
-// module.exports.getAllBLogs = getAllBLogs;
